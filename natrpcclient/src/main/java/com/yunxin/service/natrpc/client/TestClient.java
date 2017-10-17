@@ -3,9 +3,9 @@ package com.yunxin.service.natrpc.client;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.request.GetRequest;
 import com.mashape.unirest.request.HttpRequestWithBody;
+import com.yunxin.service.natrpc.api.HttpResponseQ;
 import com.yunxin.service.natrpc.commons.message.CommunicationMessage;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
@@ -148,11 +148,15 @@ public class TestClient implements IoHandler {
                     input.close();
 
                     com.mashape.unirest.http.HttpResponse<String> ret = getRequest.asString();
-
+                    HttpResponseQ myHttpResponse = new HttpResponseQ();
+                    myHttpResponse.setStatusCode(ret.getStatus());
+                    myHttpResponse.setStatusText(ret.getStatusText());
+                    myHttpResponse.setBody(ret.getBody());
+                    myHttpResponse.setHeaders(ret.getHeaders());
 
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     Output output = new Output(os);
-                    kryo.writeClassAndObject(output,ret);
+                    kryo.writeClassAndObject(output,myHttpResponse);
                     output.close();
                     response.body(Base64.encodeBase64String(os.toByteArray()));
                 }else if("POST".equals(httpMethod)){
@@ -163,10 +167,15 @@ public class TestClient implements IoHandler {
                     input.close();
 
                     com.mashape.unirest.http.HttpResponse<String> ret = postRequest.asString();
+                    HttpResponseQ myHttpResponse = new HttpResponseQ();
+                    myHttpResponse.setStatusCode(ret.getStatus());
+                    myHttpResponse.setStatusText(ret.getStatusText());
+                    myHttpResponse.setBody(ret.getBody());
+                    myHttpResponse.setHeaders(ret.getHeaders());
 
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     Output output = new Output(os);
-                    kryo.writeClassAndObject(output,ret);
+                    kryo.writeClassAndObject(output,myHttpResponse);
                     output.close();
                     response.body(Base64.encodeBase64String(os.toByteArray()));
                 }else{
