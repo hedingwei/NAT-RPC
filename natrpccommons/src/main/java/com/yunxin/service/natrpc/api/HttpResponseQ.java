@@ -6,7 +6,7 @@ import com.mashape.unirest.http.Headers;
 /**
  * Created by hedingwei on 17/10/2017.
  */
-public class HttpResponse {
+public class HttpResponseQ {
 
     private int statusCode;
     private String statusText;

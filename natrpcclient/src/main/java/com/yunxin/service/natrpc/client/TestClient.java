@@ -3,9 +3,9 @@ package com.yunxin.service.natrpc.client;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.yunxin.service.natrpc.api.HttpGetRequest;
-import com.yunxin.service.natrpc.api.HttpRequestWithBody;
-import com.yunxin.service.natrpc.api.HttpResponse;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.request.GetRequest;
+import com.mashape.unirest.request.HttpRequestWithBody;
 import com.yunxin.service.natrpc.commons.message.CommunicationMessage;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
@@ -144,19 +144,15 @@ public class TestClient implements IoHandler {
                     String value = object.getString("value");
                     Kryo kryo = new Kryo();
                     Input input = new Input(new ByteArrayInputStream(Base64.decodeBase64(value)));
-                    HttpGetRequest getRequest = (HttpGetRequest) kryo.readClassAndObject(input);
+                    GetRequest getRequest = (GetRequest) kryo.readClassAndObject(input);
                     input.close();
 
                     com.mashape.unirest.http.HttpResponse<String> ret = getRequest.asString();
-                    HttpResponse myHttpResponse = new HttpResponse();
-                    myHttpResponse.setStatusCode(ret.getStatus());
-                    myHttpResponse.setStatusText(ret.getStatusText());
-                    myHttpResponse.setBody(ret.getBody());
-                    myHttpResponse.setHeaders(ret.getHeaders());
+
 
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     Output output = new Output(os);
-                    kryo.writeClassAndObject(output,myHttpResponse);
+                    kryo.writeClassAndObject(output,ret);
                     output.close();
                     response.body(Base64.encodeBase64String(os.toByteArray()));
                 }else if("POST".equals(httpMethod)){
@@ -167,15 +163,10 @@ public class TestClient implements IoHandler {
                     input.close();
 
                     com.mashape.unirest.http.HttpResponse<String> ret = postRequest.asString();
-                    HttpResponse myHttpResponse = new HttpResponse();
-                    myHttpResponse.setStatusCode(ret.getStatus());
-                    myHttpResponse.setStatusText(ret.getStatusText());
-                    myHttpResponse.setBody(ret.getBody());
-                    myHttpResponse.setHeaders(ret.getHeaders());
 
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     Output output = new Output(os);
-                    kryo.writeClassAndObject(output,myHttpResponse);
+                    kryo.writeClassAndObject(output,ret);
                     output.close();
                     response.body(Base64.encodeBase64String(os.toByteArray()));
                 }else{
@@ -200,7 +191,9 @@ public class TestClient implements IoHandler {
 
 
     public static void main(String[] args){
-        TestClient testClient = new TestClient("localhost",9123);
+//        TestClient testClient = new TestClient("localhost",9123);
+
+        TestClient testClient = new TestClient("120.76.121.210",9123);
 
         testClient.connect();
         System.out.println("ddddd");

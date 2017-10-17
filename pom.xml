@@ -17,6 +17,8 @@
         <module>natrpccommons</module>
         <module>natrpcserver</module>
         <module>natrpcclient</module>
+        <module>natrpctestrestserver</module>
+        <module>natrpc.unirest</module>
     </modules>
 
 

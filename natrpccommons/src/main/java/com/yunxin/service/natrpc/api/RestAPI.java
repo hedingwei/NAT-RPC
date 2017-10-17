@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.mashape.unirest.http.HttpMethod;
+import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.GetRequest;
@@ -27,7 +28,7 @@ public class RestAPI {
 
 
 
-    public static HttpResponse get(String type, String name, GetRequest getRequest) throws UnirestException {
+    public static HttpResponse<String> get(String type, String name, GetRequest getRequest) throws UnirestException {
         //http://localhost:8080/natrpc /cmd/syn/TestType/TestName
         Kryo kryo = new Kryo();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -46,19 +47,16 @@ public class RestAPI {
             String body = response.getBody();
             byte[] data = Base64.decodeBase64(body);
             Input input = new Input(new ByteArrayInputStream(data));
-            HttpResponse res = (HttpResponse) kryo.readClassAndObject(input);
-            res.setHttpResponse(response);
+            HttpResponse<String> res = (HttpResponse) kryo.readClassAndObject(input);
             input.close();
             return res;
         }else{
-            HttpResponse myHttpResponse = new HttpResponse();
-            myHttpResponse.setHttpResponse(response);
-            return myHttpResponse;
+            return response;
         }
 
     }
 
-    public static HttpResponse post(String type, String name, HttpRequestWithBody post) throws UnirestException {
+    public static HttpResponse<String> post(String type, String name, HttpRequestWithBody post) throws UnirestException {
         //http://localhost:8080/natrpc /cmd/syn/TestType/TestName
         Kryo kryo = new Kryo();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -77,14 +75,12 @@ public class RestAPI {
             String body = response.getBody();
             byte[] data = Base64.decodeBase64(body);
             Input input = new Input(new ByteArrayInputStream(data));
-            HttpResponse res = (HttpResponse) kryo.readClassAndObject(input);
-            res.setHttpResponse(response);
+            HttpResponse<String> res = (HttpResponse) kryo.readClassAndObject(input);
+
             input.close();
             return res;
         }else{
-            HttpResponse myHttpResponse = new HttpResponse();
-            myHttpResponse.setHttpResponse(response);
-            return myHttpResponse;
+            return response;
         }
 
     }
@@ -92,10 +88,20 @@ public class RestAPI {
 
     public static void main(String[] args) throws UnirestException {
 
-        GetRequest getRequest = new HttpGetRequest(HttpMethod.GET,"http://img.chinaz.com/max-templates/passport/styles/topbar.css1");
+        GetRequest getRequest = new GetRequest(HttpMethod.GET,"http://localhost:8080/helloworld/type1/name1");
+        HttpRequestWithBody post = new HttpRequestWithBody(HttpMethod.POST,"http://localhost:8080/helloworld");
+        post.body("this is body");
 
-        HttpResponse response = RestAPI.get("TestType","TestName",getRequest);
 
+        RestAPI.init("http://120.76.121.210:9988/natrpc");
+
+        System.out.println("------");
+        HttpResponse<String> response = RestAPI.get("TestType","TestName",getRequest);
+        System.out.println(response.getBody());
+        System.out.println(response.getHeaders());
+
+        System.out.println("------");
+        response = RestAPI.post("TestType","TestName",post);
         System.out.println(response.getBody());
         System.out.println(response.getHeaders());
     }
