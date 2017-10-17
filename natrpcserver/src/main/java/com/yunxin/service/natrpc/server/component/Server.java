@@ -93,7 +93,7 @@ public class Server {
 
             @Override
             public void messageReceived(IoSession session, Object message) throws Exception {
-                System.out.println("---"+session);
+
                 System.out.println("messageReceived["+message+"]: "+session);
 
                 if(message instanceof CommunicationMessage){

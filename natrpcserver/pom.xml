@@ -134,6 +134,7 @@
                     <!-- 指定该Main Class为全局的唯一入口 -->
                     <mainClass>com.yunxin.service.natrpc.server.Application</mainClass>
                     <layout>ZIP</layout>
+                    <executable>true</executable>
                 </configuration>
                 <executions>
                     <execution>
